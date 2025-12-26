@@ -1,0 +1,7 @@
+{
+  "name": "SplitSmart AI",
+  "description": "A sophisticated bill-splitting application featuring AI-powered receipt scanning, multi-event management, and complex debt settlement algorithms.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
