@@ -4,7 +4,7 @@ import { AppEvent, Participant, Expense } from '../models/types';
 
 @Injectable({ providedIn: 'root' })
 export class AppStateService {
-  private readonly STORAGE_KEY = 'splitsmart_ai_data';
+  private readonly STORAGE_KEY = 'splitsmart_v2_data';
   
   events = signal<AppEvent[]>(this.loadFromStorage());
 

@@ -12,215 +12,199 @@ import { CurrencyService } from '../services/currency.service';
   selector: 'app-expense-form',
   imports: [CommonModule, FormsModule],
   template: `
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
-      <div class="bg-white w-full max-w-3xl rounded-3xl shadow-2xl my-auto animate-in fade-in zoom-in duration-300">
-        <!-- Sticky Header -->
-        <div class="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-20 rounded-t-3xl">
-          <div class="flex items-center gap-4">
+    <div class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xl overflow-y-auto">
+      <div class="bg-white w-full max-w-3xl rounded-[2.5rem] shadow-2xl my-auto animate-in fade-in zoom-in slide-in-from-bottom-8 duration-500 overflow-hidden border border-slate-100">
+        
+        <!-- Sticky Header with Dual-Action Scan -->
+        <div class="p-8 border-b border-slate-50 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur-md z-20">
+          <div class="flex items-center gap-5">
              <div class="relative group">
                @if (icon()) {
-                 <img [src]="icon()" class="w-14 h-14 rounded-2xl object-cover shadow-md border-2 border-white" alt="Category Icon">
+                 <img [src]="icon()" class="w-20 h-20 rounded-3xl object-cover shadow-2xl border-4 border-white group-hover:scale-105 transition-transform cursor-pointer" alt="Category Icon">
                } @else {
-                 <div class="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-400 border-2 border-white">
-                   <i class="fas fa-receipt text-2xl"></i>
+                 <div class="w-20 h-20 rounded-3xl bg-indigo-50 flex items-center justify-center text-indigo-400 border-4 border-white shadow-lg">
+                   <i class="fas fa-receipt text-3xl"></i>
                  </div>
                }
-               <div class="absolute -bottom-1 -right-1 flex gap-1">
-                 <button (click)="onCategoryChange()" class="bg-white text-indigo-600 rounded-full w-6 h-6 flex items-center justify-center shadow-lg text-[10px] hover:scale-110 transition-transform" title="Regenerate AI Icon">
-                   <i class="fas fa-sync-alt"></i>
+               <div class="absolute -bottom-2 -right-2 flex gap-1.5">
+                 <button (click)="onCategoryChange()" class="bg-indigo-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg hover:scale-110 transition-transform" title="Regenerate AI Icon">
+                   <i class="fas fa-magic text-[10px]"></i>
                  </button>
-                 <button (click)="triggerIconUpload()" class="bg-white text-slate-600 rounded-full w-6 h-6 flex items-center justify-center shadow-lg text-[10px] hover:scale-110 transition-transform" title="Upload Custom Icon">
-                   <i class="fas fa-upload"></i>
+                 <button (click)="triggerIconUpload()" class="bg-white text-slate-600 rounded-full w-8 h-8 flex items-center justify-center shadow-lg border border-slate-100 hover:scale-110 transition-transform" title="Upload Custom Photo">
+                   <i class="fas fa-camera text-[10px]"></i>
                  </button>
                </div>
                <input type="file" #iconInput class="hidden" (change)="onIconUpload($event)" accept="image/*">
              </div>
              <div>
-               <h2 class="text-xl font-black text-slate-900 leading-tight">{{ expenseToEdit() ? 'Edit' : 'New' }} Expense</h2>
-               <p class="text-xs text-slate-400 font-medium">Split bills effortlessly with AI.</p>
+               <h2 class="text-3xl font-black text-slate-900 leading-tight">{{ expenseToEdit() ? 'Update' : 'Log' }} Expense</h2>
+               <p class="text-[10px] text-indigo-500 font-black uppercase tracking-[0.2em] mt-1">Smart Extraction Active</p>
              </div>
           </div>
-          <div class="flex items-center gap-2">
-             <button (click)="triggerFileInput()" class="bg-indigo-600 text-white text-sm font-bold px-4 py-2.5 rounded-2xl shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all flex items-center gap-2">
+          <div class="flex items-center gap-3">
+             <button (click)="triggerFileInput()" class="bg-slate-900 text-white text-sm font-black px-6 py-4 rounded-2xl shadow-xl hover:bg-indigo-600 transition-all flex items-center gap-3 group">
                @if (isScanning()) {
                  <i class="fas fa-spinner fa-spin"></i>
+                 <span>Scanning...</span>
                } @else {
-                 <i class="fas fa-camera"></i>
+                 <i class="fas fa-expand-alt group-hover:scale-125 transition-transform"></i>
+                 <span class="hidden sm:inline">Scan / Upload Receipt</span>
                }
-               <span class="hidden sm:inline">{{ isScanning() ? 'Extracting...' : 'Scan / Upload' }}</span>
              </button>
              <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)" accept="image/*">
-             <button (click)="close.emit()" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-full transition-all"><i class="fas fa-times"></i></button>
+             <button (click)="close.emit()" class="w-12 h-12 flex items-center justify-center text-slate-300 hover:text-slate-600 hover:bg-slate-50 rounded-full transition-all text-xl"><i class="fas fa-times"></i></button>
           </div>
         </div>
 
-        <div class="p-6 space-y-8 max-h-[75vh] overflow-y-auto custom-scrollbar">
-          <!-- Cost Breakdown Visual -->
-          <section class="space-y-3 bg-slate-50 p-5 rounded-3xl border border-slate-100">
-            <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Bill Composition</h3>
+        <div class="p-8 space-y-10 max-h-[70vh] overflow-y-auto custom-scrollbar">
+          
+          <!-- Modern Composition Visualization -->
+          <section class="space-y-4 p-6 rounded-[2rem] bg-slate-50 border border-slate-100">
+            <div class="flex justify-between items-center">
+              <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Bill Architecture</h3>
+              <span class="text-xs font-black text-indigo-600">{{ currencyCode }} {{ calculatePreviewTotal() | number:'1.2-2' }} Total</span>
+            </div>
             
-            <div class="flex h-3 w-full rounded-full overflow-hidden bg-slate-200">
-               <div class="h-full bg-indigo-500 transition-all duration-500" [style.width]="getBreakdownWidth('base') + '%'" title="Base Amount"></div>
-               <div class="h-full bg-orange-400 transition-all duration-500" [style.width]="getBreakdownWidth('tax') + '%'" title="Tax"></div>
-               <div class="h-full bg-green-400 transition-all duration-500" [style.width]="getBreakdownWidth('tip') + '%'" title="Tip"></div>
-               <div class="h-full bg-blue-400 transition-all duration-500" [style.width]="getBreakdownWidth('fee') + '%'" title="Fees"></div>
-               <div class="h-full bg-red-400 transition-all duration-500" [style.width]="getBreakdownWidth('discount') + '%'" title="Discounts"></div>
+            <div class="flex h-4 w-full rounded-full overflow-hidden bg-slate-200 shadow-inner">
+               <div class="h-full bg-indigo-500 transition-all duration-700 ease-out" [style.width]="getBreakdownWidth('base') + '%'"></div>
+               <div class="h-full bg-orange-400 transition-all duration-700 ease-out" [style.width]="getBreakdownWidth('tax') + '%'"></div>
+               <div class="h-full bg-emerald-400 transition-all duration-700 ease-out" [style.width]="getBreakdownWidth('tip') + '%'"></div>
+               <div class="h-full bg-sky-400 transition-all duration-700 ease-out" [style.width]="getBreakdownWidth('fee') + '%'"></div>
+               <div class="h-full bg-red-400 transition-all duration-700 ease-out" [style.width]="getBreakdownWidth('discount') + '%'"></div>
             </div>
 
-            <div class="flex flex-wrap gap-x-4 gap-y-1 text-[10px] font-bold uppercase tracking-wider">
-               <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo-500"></span> Base: {{ currencyCode }} {{ amount | number:'1.2-2' }}</div>
-               @for (adj of adjustments; track adj.id) {
-                 <div class="flex items-center gap-1.5">
-                   <span class="w-2 h-2 rounded-full" [class.bg-orange-400]="adj.type === 'tax'" [class.bg-green-400]="adj.type === 'tip'" [class.bg-blue-400]="adj.type === 'fee' || adj.type === 'service_fee'" [class.bg-red-400]="adj.type === 'discount'"></span>
-                   {{ adj.name || adj.type }}: {{ currencyCode }} {{ getAdjustmentValue(adj) | number:'1.2-2' }}
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
+               <div class="flex flex-col">
+                 <div class="flex items-center gap-1.5 mb-1"><span class="w-2 h-2 rounded-full bg-indigo-500"></span><span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Base</span></div>
+                 <span class="text-xs font-bold text-slate-900">{{ currencyCode }} {{ amount | number:'1.2-2' }}</span>
+               </div>
+               @for (adj of adjustments.slice(0, 3); track adj.id) {
+                 <div class="flex flex-col">
+                   <div class="flex items-center gap-1.5 mb-1">
+                     <span class="w-2 h-2 rounded-full" [class.bg-orange-400]="adj.type === 'tax'" [class.bg-emerald-400]="adj.type === 'tip'" [class.bg-sky-400]="adj.type === 'fee' || adj.type === 'service_fee'" [class.bg-red-400]="adj.type === 'discount'"></span>
+                     <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest line-clamp-1">{{ adj.name || adj.type }}</span>
+                   </div>
+                   <span class="text-xs font-bold text-slate-900">{{ currencyCode }} {{ getAdjustmentValue(adj) | number:'1.2-2' }}</span>
                  </div>
                }
             </div>
           </section>
 
-          <!-- Step 1: Basic Details -->
-          <section class="space-y-4">
-            <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500">1. Details</h3>
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-              <div class="md:col-span-8">
-                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Description</label>
-                <input type="text" [(ngModel)]="desc" placeholder="e.g. Dinner at Joe's" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border-transparent text-sm font-bold focus:bg-white focus:ring-2 focus:ring-indigo-500 transition-all outline-none">
-              </div>
-              <div class="md:col-span-4">
-                 <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Category</label>
-                 <select [(ngModel)]="category" (change)="onCategoryChange()" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border-transparent text-sm font-bold focus:bg-white focus:ring-2 focus:ring-indigo-500 transition-all outline-none">
-                   @for (cat of categories; track cat) {
-                     <option [value]="cat">{{ cat }}</option>
-                   }
-                 </select>
-              </div>
-              <div class="md:col-span-4">
-                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Date</label>
-                <input type="date" [(ngModel)]="dateStr" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border-transparent text-sm font-bold focus:bg-white focus:ring-2 focus:ring-indigo-500 transition-all outline-none">
-              </div>
-              <div class="md:col-span-4">
-                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Amount (Base)</label>
-                <input type="number" [(ngModel)]="amount" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border-transparent text-sm font-bold focus:bg-white focus:ring-2 focus:ring-indigo-500 transition-all outline-none">
-              </div>
-              <div class="md:col-span-4">
-                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Currency</label>
-                <select [(ngModel)]="currencyCode" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border-transparent text-sm font-bold focus:bg-white focus:ring-2 focus:ring-indigo-500 transition-all outline-none">
-                  @for (cur of currencyService.getSymbols(); track cur) {
-                    <option [value]="cur">{{ cur }}</option>
-                  }
-                </select>
-              </div>
-              <div class="md:col-span-12">
-                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Payer</label>
-                <select [(ngModel)]="payerId" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border-transparent text-sm font-bold focus:bg-white focus:ring-2 focus:ring-indigo-500 transition-all outline-none">
-                  @for (p of event().participants; track p.id) {
-                    <option [value]="p.id">{{ p.name }}</option>
-                  }
-                </select>
-              </div>
-            </div>
-          </section>
-
-          <!-- Step 2: Adjustments -->
-          <section class="space-y-4">
-            <div class="flex justify-between items-center">
-              <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500">2. Adjustments</h3>
-              <button (click)="addAdjustment()" class="text-[10px] text-indigo-600 font-black uppercase hover:underline">+ Add Adjustment</button>
-            </div>
-            <div class="space-y-3">
-              @if (adjustments.length === 0) {
-                <div class="text-center py-4 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  No tax, tips, or fees added
+          <!-- Step 1: Core Details -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <section class="space-y-5">
+              <h3 class="text-xs font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px]">1</span>
+                Description & Dates
+              </h3>
+              <div class="space-y-4">
+                <div class="space-y-1">
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Merchant / Title</label>
+                  <input type="text" [(ngModel)]="desc" placeholder="Dinner, Flight, etc." class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-indigo-100 focus:bg-white text-sm font-bold outline-none transition-all">
                 </div>
-              }
-              @for (adj of adjustments; track adj.id; let idx = $index) {
-                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col gap-3 group">
-                  <div class="flex items-center gap-2">
-                    <select [(ngModel)]="adj.type" class="bg-white px-3 py-1.5 rounded-xl border-none text-xs font-bold shadow-sm outline-none">
-                      <option value="tax">Tax</option>
-                      <option value="tip">Tip</option>
-                      <option value="fee">Fee</option>
-                      <option value="service_fee">Service Fee</option>
-                      <option value="discount">Discount</option>
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Category</label>
+                    <select [(ngModel)]="category" (change)="onCategoryChange()" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-indigo-100 focus:bg-white text-sm font-bold outline-none transition-all">
+                      @for (cat of categories; track cat) {
+                        <option [value]="cat">{{ cat }}</option>
+                      }
                     </select>
-                    <input type="text" [(ngModel)]="adj.name" placeholder="Label (e.g. Sales Tax)" class="flex-1 bg-white px-3 py-1.5 rounded-xl border-none text-xs font-bold shadow-sm outline-none">
-                    <button (click)="removeAdjustment(idx)" class="text-slate-300 hover:text-red-500 p-2 transition-colors"><i class="fas fa-trash"></i></button>
                   </div>
-                  <div class="flex items-center justify-between gap-4">
-                    <div class="flex items-center gap-2">
-                      <div class="w-24 relative">
-                        <input type="number" [(ngModel)]="adj.amount" class="w-full bg-white px-3 py-1.5 rounded-xl border-none text-xs font-bold shadow-sm pr-8 outline-none">
-                        <button (click)="adj.isPercentage = !adj.isPercentage" class="absolute right-2 top-1.5 text-indigo-500 font-black text-[10px] transition-colors">{{ adj.isPercentage ? '%' : currencyCode }}</button>
-                      </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                      <span class="text-[10px] font-bold text-slate-400 uppercase">Apply:</span>
-                      <button 
-                        (click)="adj.appliedBeforeSplit = !adj.appliedBeforeSplit" 
-                        class="text-[10px] font-black uppercase px-3 py-1.5 rounded-full border-2 transition-all"
-                        [class.bg-indigo-600]="adj.appliedBeforeSplit"
-                        [class.border-indigo-600]="adj.appliedBeforeSplit"
-                        [class.text-white]="adj.appliedBeforeSplit"
-                        [class.text-slate-400]="!adj.appliedBeforeSplit"
-                        [class.border-slate-200]="!adj.appliedBeforeSplit"
-                      >
-                        {{ adj.appliedBeforeSplit ? 'Before Split' : 'After Split' }}
-                      </button>
-                    </div>
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Date</label>
+                    <input type="date" [(ngModel)]="dateStr" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-indigo-100 focus:bg-white text-sm font-bold outline-none transition-all">
                   </div>
                 </div>
-              }
-            </div>
-          </section>
+              </div>
+            </section>
 
-          <!-- Step 3: Splitting -->
-          <section class="space-y-4">
+            <section class="space-y-5">
+              <h3 class="text-xs font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px]">2</span>
+                Pricing & Payer
+              </h3>
+              <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Amount</label>
+                    <input type="number" [(ngModel)]="amount" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-indigo-100 focus:bg-white text-sm font-bold outline-none transition-all">
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Currency</label>
+                    <select [(ngModel)]="currencyCode" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-indigo-100 focus:bg-white text-sm font-bold outline-none transition-all">
+                      @for (cur of currencyService.getSymbols(); track cur) {
+                        <option [value]="cur">{{ cur }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Who paid?</label>
+                  <select [(ngModel)]="payerId" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-indigo-100 focus:bg-white text-sm font-bold outline-none transition-all">
+                    @for (p of event().participants; track p.id) {
+                      <option [value]="p.id">{{ p.name }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Step 2: Custom Splitting Engine -->
+          <section class="space-y-6 pt-4 border-t border-slate-50">
             <div class="flex justify-between items-center">
-              <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500">3. Splitting</h3>
-              <div class="flex gap-3">
-                <button (click)="resetSplits('equal')" class="text-[10px] text-indigo-600 font-black uppercase hover:underline">Reset to Equal</button>
-                <span class="text-slate-200">|</span>
-                <button (click)="clearSplits()" class="text-[10px] text-red-500 font-black uppercase hover:underline">Clear All</button>
+              <h3 class="text-xs font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px]">3</span>
+                Split Rules
+              </h3>
+              <div class="flex gap-4">
+                <button (click)="resetSplits('equal')" class="text-[10px] text-indigo-600 font-black uppercase tracking-widest hover:underline transition-all">Split Equally</button>
+                <button (click)="clearSplits()" class="text-[10px] text-red-500 font-black uppercase tracking-widest hover:underline transition-all">Clear All</button>
               </div>
             </div>
 
-            <div class="flex p-1 bg-slate-100 rounded-2xl w-full sm:w-fit overflow-x-auto">
+            <div class="flex p-1 bg-slate-100 rounded-2xl w-full sm:w-fit overflow-x-auto mb-6">
               @for (type of ['equal', 'percentage', 'shares', 'custom']; track type) {
-                <button (click)="setSplitType(type)" class="px-5 py-2 rounded-xl text-xs font-black uppercase transition-all whitespace-nowrap" [class.bg-white]="splitType === type" [class.shadow-sm]="splitType === type" [class.text-indigo-600]="splitType === type" [class.text-slate-500]="splitType !== type">
+                <button (click)="setSplitType(type)" class="px-8 py-3 rounded-xl text-xs font-black uppercase transition-all whitespace-nowrap tracking-widest" [class.bg-white]="splitType === type" [class.shadow-md]="splitType === type" [class.text-indigo-600]="splitType === type" [class.text-slate-500]="splitType !== type">
                   {{ type }}
                 </button>
               }
             </div>
 
-            <!-- Validation Info -->
+            <!-- Validation Progress -->
             @if (splitType === 'percentage' || splitType === 'custom') {
-              <div class="p-4 rounded-2xl text-xs font-bold transition-all border" [class.bg-green-50]="isSplitValid()" [class.border-green-100]="isSplitValid()" [class.text-green-700]="isSplitValid()" [class.bg-red-50]="!isSplitValid()" [class.border-red-100]="!isSplitValid()" [class.text-red-700]="!isSplitValid()">
-                <div class="flex justify-between items-center mb-2">
-                  <span class="uppercase tracking-widest text-[10px]">{{ splitType === 'percentage' ? 'Allocation Progress' : 'Value Progress' }}</span>
-                  <span class="text-sm">{{ getSplitTotal() | number:'1.1-2' }}{{ splitType === 'percentage' ? '%' : currencyCode }}</span>
+              <div class="p-5 rounded-3xl text-xs font-bold transition-all border-2 mb-6" [class.bg-emerald-50]="isSplitValid()" [class.border-emerald-100]="isSplitValid()" [class.bg-red-50]="!isSplitValid()" [class.border-red-100]="!isSplitValid()">
+                <div class="flex justify-between items-center mb-3">
+                  <span class="uppercase tracking-[0.2em] text-[10px] text-slate-400">Assignment Balance</span>
+                  <span class="font-black" [class.text-emerald-600]="isSplitValid()" [class.text-red-600]="!isSplitValid()">
+                    {{ getSplitTotal() | number:'1.1-2' }}{{ splitType === 'percentage' ? '%' : currencyCode }}
+                  </span>
                 </div>
-                <div class="w-full bg-white/50 rounded-full h-2 overflow-hidden backdrop-blur-sm">
-                  <div class="h-full transition-all duration-500 ease-out" [class.bg-green-500]="isSplitValid()" [class.bg-red-500]="!isSplitValid()" [style.width]="getSplitProgress() + '%'"></div>
+                <div class="w-full bg-slate-200/50 rounded-full h-3 overflow-hidden shadow-inner">
+                  <div class="h-full transition-all duration-700 ease-out" [class.bg-emerald-500]="isSplitValid()" [class.bg-red-500]="!isSplitValid()" [style.width]="getSplitProgress() + '%'"></div>
                 </div>
                 @if (!isSplitValid()) {
-                  <p class="mt-2 text-[10px] uppercase tracking-wider font-black flex items-center gap-2">
-                    <i class="fas fa-exclamation-triangle"></i>
+                  <p class="mt-3 text-[9px] uppercase tracking-widest font-black text-red-500 flex items-center gap-2">
+                    <i class="fas fa-circle-info"></i>
                     {{ getSplitRemainingText() }}
                   </p>
                 }
               </div>
             }
 
-            <div class="space-y-2">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               @for (p of event().participants; track p.id) {
                 @let split = getSplitFor(p.id);
-                <div class="flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-50 shadow-sm hover:border-indigo-100 hover:shadow-md transition-all group">
-                  <div class="flex items-center gap-3">
-                    <input type="checkbox" [checked]="isParticipantInvolved(p.id)" (change)="toggleParticipant(p.id)" class="w-5 h-5 rounded-lg border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                <div class="group flex items-center justify-between p-5 rounded-[1.5rem] bg-white border-2 border-slate-50 hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-50 transition-all">
+                  <div class="flex items-center gap-4">
+                    <div class="relative">
+                      <input type="checkbox" [checked]="isParticipantInvolved(p.id)" (change)="toggleParticipant(p.id)" class="w-6 h-6 rounded-lg border-2 border-slate-200 text-indigo-600 focus:ring-4 focus:ring-indigo-50 cursor-pointer transition-all">
+                    </div>
                     <div class="flex flex-col">
-                      <span class="font-bold text-slate-800" [class.opacity-50]="!isParticipantInvolved(p.id)">{{ p.name }}</span>
+                      <span class="font-black text-slate-800 tracking-tight" [class.opacity-40]="!isParticipantInvolved(p.id)">{{ p.name }}</span>
                       @if (isParticipantInvolved(p.id) && splitType !== 'equal') {
-                         <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Estimated Share: {{ currencyCode }} {{ getEstimatedPersonShare(p.id) | number:'1.2-2' }}</span>
+                         <span class="text-[9px] text-indigo-400 font-black uppercase tracking-widest mt-0.5">Share: {{ currencyCode }} {{ getEstimatedPersonShare(p.id) | number:'1.2-2' }}</span>
                       }
                     </div>
                   </div>
@@ -228,16 +212,16 @@ import { CurrencyService } from '../services/currency.service';
                   @if (isParticipantInvolved(p.id)) {
                     <div class="flex items-center gap-3">
                       @if (splitType !== 'equal') {
-                        <button (click)="fillRemaining(p.id)" class="text-[9px] text-indigo-600 font-black uppercase hover:bg-indigo-50 px-2 py-1 rounded-lg transition-all opacity-0 group-hover:opacity-100">Fill Left</button>
+                        <button (click)="fillRemaining(p.id)" class="text-[9px] text-indigo-600 font-black uppercase tracking-widest hover:bg-indigo-50 px-2 py-1 rounded-lg transition-all opacity-0 group-hover:opacity-100">Fill</button>
                       }
                       <div class="w-24 relative">
                         <input 
                           type="number" 
                           [(ngModel)]="split.value"
                           [disabled]="splitType === 'equal'"
-                          class="w-full px-3 py-2 rounded-xl border border-slate-100 text-right font-black text-slate-900 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                          class="w-full pl-3 pr-7 py-3 rounded-xl border-2 border-slate-50 text-right font-black text-slate-900 bg-slate-50 focus:bg-white focus:border-indigo-200 outline-none transition-all"
                         >
-                        <span class="absolute right-2 top-2 text-[8px] font-black text-slate-300 uppercase select-none pointer-events-none">
+                        <span class="absolute right-2 top-3.5 text-[8px] font-black text-slate-300 uppercase select-none pointer-events-none">
                           {{ splitType === 'percentage' ? '%' : (splitType === 'shares' ? 'sh' : currencyCode) }}
                         </span>
                       </div>
@@ -249,19 +233,23 @@ import { CurrencyService } from '../services/currency.service';
           </section>
         </div>
 
-        <!-- Sticky Footer -->
-        <div class="p-6 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-b-3xl">
-          <div class="flex flex-col text-center sm:text-left">
-             <span class="text-[10px] uppercase font-black tracking-widest text-slate-400">Total Calculation</span>
-             <div class="flex items-baseline gap-2">
-               <span class="text-3xl font-black text-slate-900">{{ currencyCode }} {{ calculatePreviewTotal() | number:'1.2-2' }}</span>
-               <span class="text-xs font-bold text-slate-400">incl. adjustments</span>
+        <!-- Sticky Interaction Footer -->
+        <div class="p-8 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-6 rounded-b-[2.5rem]">
+          <div class="flex items-center gap-6 text-center sm:text-left">
+             <div class="flex flex-col">
+               <span class="text-[10px] uppercase font-black tracking-[0.3em] text-slate-400 mb-1">Total Bill</span>
+               <span class="text-4xl font-black text-slate-900 tracking-tighter">{{ currencyCode }} {{ calculatePreviewTotal() | number:'1.2-2' }}</span>
+             </div>
+             <div class="hidden sm:block w-px h-12 bg-slate-200"></div>
+             <div class="hidden sm:flex flex-col">
+               <span class="text-[10px] uppercase font-black tracking-[0.3em] text-slate-400 mb-1">Splitting</span>
+               <span class="text-sm font-bold text-slate-500">{{ splits.length }} Members Involved</span>
              </div>
           </div>
-          <div class="flex gap-3 w-full sm:w-auto">
-            <button (click)="close.emit()" class="flex-1 sm:flex-none px-6 py-3 rounded-2xl border border-slate-200 font-bold hover:bg-white transition-all">Cancel</button>
-            <button (click)="save()" [disabled]="!isSplitValid()" class="flex-1 sm:flex-none px-10 py-3 rounded-2xl bg-indigo-600 text-white font-black shadow-xl shadow-indigo-100 hover:bg-indigo-700 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-50 disabled:translate-y-0 disabled:hover:translate-y-0">
-              Save Expense
+          <div class="flex gap-4 w-full sm:w-auto">
+            <button (click)="close.emit()" class="flex-1 sm:flex-none px-10 py-4 rounded-2xl bg-white border-2 border-slate-200 font-black text-slate-400 hover:text-slate-600 transition-all">Cancel</button>
+            <button (click)="save()" [disabled]="!isSplitValid()" class="flex-1 sm:flex-none px-12 py-4 rounded-2xl bg-indigo-600 text-white font-black shadow-2xl shadow-indigo-200 hover:bg-indigo-700 hover:-translate-y-1 active:translate-y-0 transition-all disabled:opacity-20 disabled:translate-y-0">
+              Finalize & Save
             </button>
           </div>
         </div>
@@ -269,9 +257,10 @@ import { CurrencyService } from '../services/currency.service';
     </div>
   `,
   styles: [`
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -285,7 +274,6 @@ export class ExpenseFormComponent {
   expenseToEdit = input<Expense | null>(null);
   close = output();
 
-  // Reference to file inputs via viewChild for better typing and reliability
   fileInputRef = viewChild<ElementRef<HTMLInputElement>>('fileInput');
   iconInputRef = viewChild<ElementRef<HTMLInputElement>>('iconInput');
 
@@ -339,12 +327,10 @@ export class ExpenseFormComponent {
     }
   }
 
-  // Trigger icon file upload
   triggerIconUpload() {
     this.iconInputRef()?.nativeElement.click();
   }
 
-  // Handle icon upload with proper event typing
   onIconUpload(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -363,12 +349,10 @@ export class ExpenseFormComponent {
   getBreakdownWidth(type: 'base' | 'tax' | 'tip' | 'fee' | 'discount'): number {
     const total = this.calculatePreviewTotal() || 1;
     if (type === 'base') return (this.amount / total) * 100;
-    
     const relevantAdjs = this.adjustments.filter(a => {
         if (type === 'fee') return a.type === 'fee' || a.type === 'service_fee';
         return a.type === type;
     });
-    
     const sum = relevantAdjs.reduce((acc, a) => acc + this.getAdjustmentValue(a), 0);
     return (sum / total) * 100;
   }
@@ -425,8 +409,8 @@ export class ExpenseFormComponent {
     if (this.splits.length === 0) return false;
     if (this.splitType === 'equal' || this.splitType === 'shares') return true;
     const total = this.getSplitTotal();
-    if (this.splitType === 'percentage') return Math.abs(total - 100) < 0.01;
-    if (this.splitType === 'custom') return Math.abs(total - this.amount) < 0.01;
+    if (this.splitType === 'percentage') return Math.abs(total - 100) < 0.1;
+    if (this.splitType === 'custom') return Math.abs(total - this.amount) < 0.1;
     return false;
   }
 
@@ -486,12 +470,10 @@ export class ExpenseFormComponent {
     return Math.max(0, total);
   }
 
-  // Trigger main receipt file input
   triggerFileInput() {
     this.fileInputRef()?.nativeElement.click();
   }
 
-  // Handle receipt selection with improved typing
   async onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -511,15 +493,9 @@ export class ExpenseFormComponent {
         this.adjustments = [];
         this.items = [];
 
-        if (result.tax) {
-          this.adjustments.push({ id: crypto.randomUUID(), name: 'Tax', amount: result.tax, type: 'tax', isPercentage: false, appliedBeforeSplit: true });
-        }
-        if (result.tip) {
-          this.adjustments.push({ id: crypto.randomUUID(), name: 'Tip', amount: result.tip, type: 'tip', isPercentage: false, appliedBeforeSplit: true });
-        }
-        if (result.service_fee) {
-          this.adjustments.push({ id: crypto.randomUUID(), name: 'Service Fee', amount: result.service_fee, type: 'service_fee', isPercentage: false, appliedBeforeSplit: true });
-        }
+        if (result.tax) this.adjustments.push({ id: crypto.randomUUID(), name: 'Tax', amount: result.tax, type: 'tax', isPercentage: false, appliedBeforeSplit: true });
+        if (result.tip) this.adjustments.push({ id: crypto.randomUUID(), name: 'Tip', amount: result.tip, type: 'tip', isPercentage: false, appliedBeforeSplit: true });
+        if (result.service_fee) this.adjustments.push({ id: crypto.randomUUID(), name: 'Service Fee', amount: result.service_fee, type: 'service_fee', isPercentage: false, appliedBeforeSplit: true });
 
         if (result.items) {
           this.items = result.items.map((i: any) => ({
@@ -528,8 +504,6 @@ export class ExpenseFormComponent {
             price: i.price
           }));
         }
-
-        // Auto-generate icon based on AI detected category
         this.onCategoryChange();
       }
       this.isScanning.set(false);
